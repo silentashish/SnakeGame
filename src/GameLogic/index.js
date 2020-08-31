@@ -28,7 +28,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 export default class Game extends Component {
   constructor(props) {
     super(props);
-    this.boardSize = Constants.GRID_SIZE * Constants.CELL_SIZE;
+    this.boardSize = Constants.GRID_SIZE * Constants.CELL_SIZE - 100;
     this.engine = null;
     this.state = {
       running: true,
@@ -171,7 +171,7 @@ export default class Game extends Component {
             }}
             style={[
               {
-                width: this.boardSize,
+                width: this.boardSize + 100,
                 height: this.boardSize,
                 backgroundColor: '#f5f5f5',
                 flex: null,

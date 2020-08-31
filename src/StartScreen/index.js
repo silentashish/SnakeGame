@@ -10,7 +10,7 @@ export default (props) => {
   const {navigation} = props;
   return (
     <>
-      <SafeAreaView />
+      <SafeAreaView backgroundColor={primaryColor}/>
       <StatusBar backgroundColor={darkStatusColor} />
       <View style={styles.mainView}>
         <View style={styles.centerElement}>

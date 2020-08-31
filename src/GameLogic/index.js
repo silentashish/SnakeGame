@@ -15,7 +15,6 @@ import {
   TextInput,
   SafeAreaView,
 } from 'react-native';
-import { ScaledSheet } from 'react-native-size-matters';
 import {GameEngine, dispatch} from 'react-native-game-engine';
 import {Head} from './head';
 import {Food} from './food';
@@ -24,11 +23,12 @@ import {GameLoop} from './systems';
 import Constants from './Constants';
 import {primaryColor, secondaryColor, darkStatusColor} from '../utils';
 import Icon from 'react-native-vector-icons/AntDesign';
+import {ScaledSheet, verticalScale} from 'react-native-size-matters';
 
 export default class Game extends Component {
   constructor(props) {
     super(props);
-    this.boardSize = Constants.GRID_SIZE * Constants.CELL_SIZE - 100;
+    this.boardSize = Constants.GRID_SIZE * Constants.CELL_SIZE;
     this.engine = null;
     this.state = {
       running: true,
@@ -159,50 +159,52 @@ export default class Game extends Component {
   render() {
     const {score, name} = this.state;
     return (
-      <>
-        <SafeAreaView backgroundColor={darkStatusColor} />
+      <View style={{flex: 1}}>
+        <SafeAreaView />
         <View style={styles.Header}>
           <Text style={styles.heading}>Snake Master</Text>
         </View>
+
         <View style={styles.container}>
-          <GameEngine
-            ref={(ref) => {
-              this.engine = ref;
-            }}
-            style={[
-              {
-                width: this.boardSize + 100,
-                height: this.boardSize,
-                backgroundColor: '#f5f5f5',
-                flex: null,
-                marginTop: 20,
-              },
-            ]}
-            systems={[GameLoop]}
-            entities={{
-              head: {
-                position: [0, 0],
-                xspeed: 1,
-                yspeed: 0,
-                nextMove: 10,
-                updateFrequency: 10,
-                size: 20,
-                renderer: <Head />,
-              },
-              food: {
-                position: [
-                  this.randomBetween(0, Constants.GRID_SIZE - 1),
-                  this.randomBetween(0, Constants.GRID_SIZE - 1),
-                ],
-                size: 20,
-                renderer: <Food />,
-              },
-              tail: {size: 20, elements: [], renderer: <Tail />},
-            }}
-            running={this.state.running}
-            onEvent={this.onEvent}>
-          </GameEngine>
-          
+          <View style={styles.danger}>
+            <GameEngine
+              ref={(ref) => {
+                this.engine = ref;
+              }}
+              style={[
+                {
+                  width: this.boardSize,
+                  height: this.boardSize,
+                  backgroundColor: '#f5f5f5',
+                  flex: null,
+                },
+              ]}
+              systems={[GameLoop]}
+              entities={{
+                head: {
+                  position: [0, 0],
+                  xspeed: 1,
+                  yspeed: 0,
+                  nextMove: 10,
+                  updateFrequency: 10,
+                  size: 20,
+                  renderer: <Head />,
+                },
+                food: {
+                  position: [
+                    this.randomBetween(0, Constants.GRID_SIZE - 1),
+                    this.randomBetween(0, Constants.GRID_SIZE - 1),
+                  ],
+                  size: 20,
+                  renderer: <Food />,
+                },
+                tail: {size: 20, elements: [], renderer: <Tail />},
+              }}
+              running={this.state.running}
+              onEvent={this.onEvent}>
+              {/* <StatusBar hidden={true} /> */}
+            </GameEngine>
+          </View>
           <View style={styles.scoreView}>
             <Text style={styles.scoreTxt}>Score : </Text>
             <Text style={styles.scoreTxt}>{score}</Text>
@@ -215,7 +217,11 @@ export default class Game extends Component {
                 onPress={() => {
                   this.engine.dispatch({type: 'move-up'});
                 }}>
-                <Icon name="upcircle" size={50} color={secondaryColor} />
+                <Icon
+                  name="upcircle"
+                  size={verticalScale(60)}
+                  color={secondaryColor}
+                />
               </TouchableOpacity>
             </View>
             <View style={styles.controlRow}>
@@ -224,7 +230,11 @@ export default class Game extends Component {
                 onPress={() => {
                   this.engine.dispatch({type: 'move-left'});
                 }}>
-                <Icon name="leftcircle" size={50} color={secondaryColor} />
+                <Icon
+                  name="leftcircle"
+                  size={verticalScale(60)}
+                  color={secondaryColor}
+                />
               </TouchableOpacity>
               <View style={[styles.control, {backgroundColor: null}]} />
               <TouchableOpacity
@@ -232,7 +242,11 @@ export default class Game extends Component {
                 onPress={() => {
                   this.engine.dispatch({type: 'move-right'});
                 }}>
-                <Icon name="rightcircle" size={50} color={secondaryColor} />
+                <Icon
+                  name="rightcircle"
+                  size={verticalScale(60)}
+                  color={secondaryColor}
+                />
               </TouchableOpacity>
             </View>
             <View style={styles.controlRow}>
@@ -241,12 +255,16 @@ export default class Game extends Component {
                 onPress={() => {
                   this.engine.dispatch({type: 'move-down'});
                 }}>
-                <Icon name="downcircle" size={50} color={secondaryColor} />
+                <Icon
+                  name="downcircle"
+                  size={verticalScale(60)}
+                  color={secondaryColor}
+                />
               </TouchableOpacity>
             </View>
           </View>
         </View>
-      </>
+      </View>
     );
   }
 }
@@ -255,96 +273,106 @@ const styles = ScaledSheet.create({
   container: {
     //flex: 1,
     backgroundColor: primaryColor,
-    // alignItems: 'center',
-    // justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     flex: 1,
   },
   Header: {
     backgroundColor: darkStatusColor,
     justifyContent: 'center',
     alignItems: 'center',
-    height: '50@ms',
+    height: '40@vs',
   },
   heading: {
     fontWeight: 'bold',
     color: 'white',
-    fontSize: '20@ms',
+    fontSize: 20,
   },
   controls: {
     // width: 400,
     // height: 400,
     flexDirection: 'column',
-    marginTop: '10@ms',
-    alignSelf: 'center',
-    position: 'absolute',
-    bottom: '30@ms'
+    flex: 1,
+    // backgroundColor: 'blue',
+    justifyContent: 'center',
+    // marginTop: 40,
+    // backgroundColor: 'red',
   },
   controlRow: {
-    height: '50@ms',
-    width: '300@ms',
+    height: '70@vs',
+    width: 300,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
   },
   control: {
-    width: '50@ms',
-    height: '50@ms',
+    width: '70@vs',
+    height: '70@vs',
+    // backgroundColor: 'green',
     justifyContent: 'center',
     alignItems: 'center',
     // margin: 10,
+  },
+  danger: {
+    backgroundColor: 'red',
+    width: '100%',
+    paddingVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   scoreView: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: darkStatusColor,
-    padding: '10@ms',
-    width: '50%',
-    alignSelf: 'center',
-    borderRadius: '10@ms',
-    // paddingHorizontal: '20@ms',
-    marginTop: '10@ms',
+    padding: 10,
+    paddingHorizontal: 20,
+    marginTop: 10,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    borderTopRightRadius: 20,
   },
   scoreTxt: {
-    fontSize: '20@ms',
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
   },
   stdModalMainView: {
-    height: '320@ms',
-    width: '360@ms',
+    height: 320,
+    width: 360,
     backgroundColor: '#455A64',
     bottom: 0,
     position: 'absolute',
-    borderTopLeftRadius: '40@ms',
-    borderTopRightRadius: '40@ms',
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
     alignItems: 'center',
   },
   nameInput: {
-    fontSize: '25@ms',
+    fontSize: 25,
     fontWeight: 'bold',
-    height: '50@ms',
-    width: '250@ms',
-    marginTop: '40@ms',
+    height: 50,
+    width: 250,
+    marginTop: 40,
     textAlign: 'center',
   },
   modalHaderTxt: {
     textAlign: 'center',
-    fontSize: '25@ms',
+    fontSize: 25,
     color: 'white',
     fontWeight: 'bold',
-    marginTop: '10@ms',
+    marginTop: 10,
   },
   stdModalBtn: {
-    height: '50@ms',
-    width: '200@ms',
+    height: 50,
+    width: 200,
     backgroundColor: 'blue',
-    marginTop: '40@ms',
+    marginTop: 40,
     justifyContent: 'center',
-    borderRadius: '40@ms',
+    borderRadius: 40,
   },
   stdTxt: {
     textAlign: 'center',
-    fontSize: '25@ms',
+    fontSize: 25,
     color: 'white',
   },
 });
